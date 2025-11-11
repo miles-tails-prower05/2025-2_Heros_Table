@@ -1,4 +1,8 @@
-﻿import pygame
+﻿# 2025-2학기 알고리즘과게임컨텐츠 기말 프로젝트: 영웅의 식탁(게임)
+# 제작: 놀고싶조 (9분반)
+# 소스 코드: https://github.com/miles-tails-prower05/2025-2_Heros_Table
+
+import pygame
 import random
 import os
 
