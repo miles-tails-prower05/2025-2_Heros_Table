@@ -28,7 +28,7 @@ jump_sound_path = os.path.join("src\sound", "jump.mp3")
 try:
     bite_sound = pygame.mixer.Sound(bite_sound_path)
 except Exception as e:
-    print(f"효과음 로딩 실패: {e}")
+    print(f"효과음(bite) 로딩 실패: {e}")
     bite_sound = None
 
 try:
@@ -67,7 +67,6 @@ UI_FONT = pygame.font.SysFont('malgungothic', 24)
 GAME_OVER_FONT = pygame.font.SysFont('malgungothic', 64)
 
 # --- 음식 데이터 정의 ---
-# 제안서의 표를 기반으로 함 
 FOOD_DATA = [
     {"name": "밥 한 공기", "carbs": 20, "protein": 2, "fat": 2, "color": CARB_COLOR, "image": "rice.png"},
     {"name": "닭가슴살 스테이크", "carbs": 10, "protein": 20, "fat": 7, "color": PROTEIN_COLOR, "image": "chickenSteak.png"},
@@ -107,19 +106,19 @@ class Player(pygame.sprite.Sprite):
         self.carbs = 100
         self.protein = 100
         self.fat = 100
-        # 영양소 범위: 0 ~ 200 [cite: 13]
+        # 영양소 범위: 0 ~ 200
 
     def calculate_modifiers(self):
-        """ 영양소 값에 따라 이동 속도와 점프 높이를 계산합니다.  """
+        # 영양소 값에 따라 이동 속도와 점프 높이를 계산
         deficient_count = 0
         excess_count = 0
         
         nutrients = [self.carbs, self.protein, self.fat]
         
         for n in nutrients:
-            if n < 50: # 부족한 영양소 [cite: 14]
+            if n < 50: # 부족한 영양소
                 deficient_count += 1
-            elif n > 150: # 과다한 영양소 [cite: 15]
+            elif n > 150: # 과다한 영양소
                 excess_count += 1
                 
         # 25%p씩 증감
@@ -176,7 +175,7 @@ class Player(pygame.sprite.Sprite):
                 jump_sound.play() 
 
     def add_nutrients(self, food):
-        """ 음식의 영양소를 플레이어에게 더합니다.  """
+        # 음식의 영양소를 플레이어에게 더함
         self.carbs += food.carbs
         self.protein += food.protein
         self.fat += food.fat
@@ -190,13 +189,13 @@ class Player(pygame.sprite.Sprite):
             bite_sound.play()
 
     def decay_nutrients(self):
-        """ 매 초마다 모든 영양소 1씩 감소  """
+        # 매 초마다 모든 영양소 1씩 감소
         self.carbs = max(0, self.carbs - 1)
         self.protein = max(0, self.protein - 1)
         self.fat = max(0, self.fat - 1)
 
     def check_game_over(self):
-        """ 게임 오버 조건 확인  """
+        # 게임 오버 조건 확인
         nutrients = [self.carbs, self.protein, self.fat]
         if any(n <= 0 for n in nutrients) or any(n >= 200 for n in nutrients):
             return True
@@ -206,7 +205,7 @@ class Player(pygame.sprite.Sprite):
 class Food(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        # 떨어지는 음식 [cite: 7]
+        # 떨어지는 음식
         food_type = random.choice(FOOD_DATA)
         
         self.name = food_type["name"]
@@ -228,7 +227,7 @@ class Food(pygame.sprite.Sprite):
         # 무작위 x좌표, 동일한 y좌표(화면 상단)에서 생성 
         self.rect = self.image.get_rect(center=(random.randint(20, SCREEN_WIDTH - 20), -50))
         
-        # 영양소 수치에 따라 떨어지는 속도 조절 [cite: 18, 19]
+        # 영양소 수치에 따라 떨어지는 속도 조절
         base_speed = 3
         avg_nutrient = (self.carbs + self.protein + self.fat) / 3
         self.speed = base_speed + (avg_nutrient / 20) # 
@@ -288,7 +287,7 @@ def main_game():
         print(f"아이콘 이미지 로딩 실패: {e}")
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("영웅의 식탁") # [cite: 1]
+    pygame.display.set_caption("영웅의 식탁")
     clock = pygame.time.Clock()
 
      # --- 배경 이미지 로드 ---
@@ -397,7 +396,7 @@ def main_game():
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN: # 아무 키나 누르면
-                    waiting_for_restart = False # -> game_over가 True인 상태로 외부 루프 재시작
+                    waiting_for_restart = False  # -> game_over가 True인 상태로 외부 루프 재시작
 
     pygame.quit()
 
